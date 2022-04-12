@@ -29,25 +29,24 @@ class TestCase:
             raise ApiError(response)
 
     def test_add_user(self, _get_token):
-        url = f"{URL}user/"
+        url = f"{URL}user"
         token = _get_token["access_token"]
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
         }
         payload = {
-            "first_name": "John1",
+            "first_name": "John",
             "last_name": "Doe",
-            "email": "jdoe@x.edu.ww",
-            "national_id": "0011223355",
+            "email": "jdoe@x.edu.ng",
+            "national_id": "0011223344",
             "password": "1Ass_word",
         }
         response = httpx.post(url, headers=headers, data=json.dumps(payload))
-        print(response.json)
         assert response.json()["message"] == "User added successfully."
 
     def test_get_user(self, _get_token):
-        url = f"{URL}user/"
+        url = f"{URL}user"
         token = _get_token["access_token"]
         headers = {
             "Content-Type": "application/json",
