@@ -43,7 +43,7 @@ class TestCase:
             "password": "1Ass_word",
         }
         response = httpx.post(url, headers=headers, data=json.dumps(payload))
-        print(response.json())
+        print(response.json)
         assert response.json()["message"] == "User added successfully."
 
     def test_get_user(self, _get_token):
