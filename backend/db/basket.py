@@ -15,30 +15,58 @@ def basket_helper(basket) -> dict:
 async def retrieve_baskets():
     baskets = []
     async for basket in baskets_collection.find():
-        baskets.append(basket_helper(basket))
+        basket = basket_helper(basket)
+        baskets.append(basket)
     return baskets
 
 
 async def add_basket(basket_data: dict) -> dict:
-    products = []
-    for i in range(len(basket_data["items_uid_count"])):
-        product = await products_collection.find_one(
-            {"uid": basket_data["items_uid_count"][i][0]}
-        )
-        basket_data["items"].append(
-            {
-                "uid": product["uid"],
-                "name": product["name"],
-                "_id": str(product["_id"]),
-                "item_count": basket_data["items_uid_count"][i][1],
-            }
-        )
-        products.append(product)
-    basket_data["updated_at"] = None
-    if len(products) > 0:
+    product = await products_collection.find_one(
+        {"_id": ObjectId(basket_data["item_id_quantity"]["item_id"])}
+    )
+    if product:
+        basket_data["items"][str(product["_id"])] = {
+            "name": product["name"],
+            "product_id": str(product["_id"]),
+            "item_quantity": basket_data["item_id_quantity"]["quantity"],
+            "price": basket_data["item_id_quantity"]["quantity"] * product["price"],
+        }
+        basket_data["updated_at"] = None
         basket = await baskets_collection.insert_one(basket_data)
-        new_basket = await baskets_collection.find_one({"_id": basket.inserted_id})
-        return basket_helper(new_basket)
+        print("***", basket.inserted_id)
+        return basket_helper(basket_data)
+    return False
+
+
+async def add_product_to_basket(basket_data: dict, id: str) -> dict:
+    product = await products_collection.find_one(
+        {"_id": ObjectId(basket_data["item_id_quantity"]["item_id"])}
+    )
+    basket = await baskets_collection.find_one({"_id": ObjectId(id)})
+    if product and basket:
+        if str(product["_id"]) in basket["items"]:
+            basket["items"][str(product["_id"])] = {
+                "name": product["name"],
+                "product_id": str(product["_id"]),
+                "item_quantity": (
+                    basket["items"][str(product["_id"])]["item_quantity"]
+                    + basket_data["item_id_quantity"]["quantity"]
+                ),
+                "price": (
+                    basket["items"][str(product["_id"])]["item_quantity"]
+                    + basket_data["item_id_quantity"]["quantity"]
+                )
+                * product["price"],
+            }
+        else:
+            basket["items"][str(product["_id"])] = {
+                "name": product["name"],
+                "product_id": str(product["_id"]),
+                "item_quantity": basket_data["item_id_quantity"]["quantity"],
+                "price": basket_data["item_id_quantity"]["quantity"] * product["price"],
+            }
+        await baskets_collection.update_one({"_id": ObjectId(id)}, {"$set": basket})
+        return basket_helper(basket)
     return False
 
 
@@ -49,31 +77,22 @@ async def retrieve_basket(id: str) -> dict:
 
 
 async def update_basket(id: str, basket_data: dict):
-    if len(basket_data) < 1:
-        return False
     basket = await baskets_collection.find_one({"_id": ObjectId(id)})
     if basket:
-        products = []
-        for i in range(len(basket_data["items_uid_count"])):
-            product = await products_collection.find_one(
-                {"uid": basket_data["items_uid_count"][i][0]}
-            )
-            basket_data["items"].append(
-                {
-                    "uid": product["uid"],
-                    "name": product["name"],
-                    "_id": str(product["_id"]),
-                    "item_count": basket_data["items_uid_count"][i][1],
-                }
-            )
-            products.append(product)
-    if len(products) > 0:
+        basket["items"] = {
+            "name": basket_data["name"],
+            "item_count": basket_data["items_uid_count"]["quantity"],
+            "price": basket_data["item_id_quantity"]["quantity"]
+            * (basket["price"] / basket["items_uid_count"]["quantity"]),
+        }
         updated_basket = await baskets_collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": basket_data}
+            {"_id": ObjectId(id)}, {"$set": basket}
         )
         if updated_basket:
-            return True
+            return basket_helper(basket)
+
         return False
+    return False
 
 
 async def delete_basket(id: str):

@@ -35,7 +35,7 @@ async def get_product_data(id):
 
 @router.post("/", response_description="product data added into the database")
 async def add_product_data(product: ProductSchema = Body(...)):
-    product_exists = await products_collection.find_one({"uid": product.uid})
+    product_exists = await products_collection.find_one({"name": product.name})
     if product_exists:
         return "product already exists"
     product = jsonable_encoder(product)

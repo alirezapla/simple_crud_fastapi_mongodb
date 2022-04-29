@@ -1,12 +1,17 @@
-from typing import Optional, List
+from typing import Dict, Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field
 from .product import ProductId
 
 
+class ItemsQuantity(BaseModel):
+    item_id: str
+    quantity: int
+
+
 class BasketSchema(BaseModel):
-    items: List[dict] = []
-    items_uid_count: List[List[int]] = []
+    items: dict = {}
+    item_id_quantity: ItemsQuantity
     status: Optional[bool]
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
@@ -14,22 +19,37 @@ class BasketSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "items_uid_count": "[['uid.0','count.0'],....,['uid.n','count.n']]",
+                "item_id_quantity": {"item_id": " ", "quantity": 1},
                 "status": False,
             }
         }
 
 
-class UpdateBasket(BaseModel):
-    items: List[dict] = []
-    items_uid_count: List[List[int]]
+class AddToBasketSchema(BaseModel):
+    items: dict = {}
+    item_id_quantity: ItemsQuantity
     status: Optional[bool]
     updated_at: Optional[datetime] = datetime.now()
 
     class Config:
         schema_extra = {
             "example": {
-                "items_uid_count": "[['uid.0','count.0'],....,['uid.n','count.n']]",
+                "item_id_quantity": {"item_id": " ", "quantity": 1},
+                "status": False,
+            }
+        }
+
+
+class UpdateBasket(BaseModel):
+    items: dict = {}
+    item_id_quantity: ItemsQuantity
+    status: Optional[bool]
+    updated_at: Optional[datetime] = datetime.now()
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "quantity": 1,
                 "status": False,
             }
         }

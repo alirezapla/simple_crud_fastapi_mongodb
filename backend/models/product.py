@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class ProductSchema(BaseModel):
-    uid: Optional[int] = Field(default=None, nullable=False, primary_key=True)
     name: Optional[str] = Field(...)
     price: Optional[float]
     description: Optional[str] = None
@@ -12,7 +11,6 @@ class ProductSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "uid": 1,
                 "name": "foo",
                 "price": 2000.5,
                 "description": "product A",
