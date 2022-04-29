@@ -21,17 +21,17 @@ app.include_router(
     UserRouter,
     tags=["Users"],
     prefix="/user",
-    # dependencies=[Depends(token_listener)],
+    dependencies=[Depends(token_listener)],
 )
 app.include_router(
     BasketRouter,
     tags=["Baskets"],
     prefix="/basket",
-    # dependencies=[Depends(token_listener)],
+    dependencies=[Depends(token_listener)],
 )
 app.include_router(
     ProductRouter,
     tags=["Products"],
     prefix="/product",
-    # dependencies=[Depends(token_listener)],
+    dependencies=[Depends(token_listener)],
 )
