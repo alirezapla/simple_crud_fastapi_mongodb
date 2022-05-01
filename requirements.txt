@@ -1,3 +1,4 @@
+fastapi-redis-cache
 fastapi==0.73.0
 motor==2.5.1
 pydantic[email]
@@ -9,3 +10,5 @@ passlib
 locust
 pytest
 httpx
+SQLAlchemy==1.4.26
+sqlalchemy2-stubs

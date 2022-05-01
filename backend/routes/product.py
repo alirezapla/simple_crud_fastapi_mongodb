@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
-
+from fastapi_redis_cache import cache
 
 from backend.models.product import ProductSchema
 from backend.db.product import (
@@ -18,6 +18,7 @@ router = APIRouter()
 
 
 @router.get("/", response_description="Get all products")
+@cache(expire=5)
 async def get_products():
     products = await retrieve_products()
     if products:

@@ -16,6 +16,18 @@ services:
       - 27017
     volumes:
       - data:/bitnami/mongodb
+  master:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./tests:/mnt/locust
+    command: -f /mnt/locust/loadtest.py --master
 
+  worker:
+    image: locustio/locust
+    volumes:
+      - ./tests:/mnt/locust
+    command: -f /mnt/locust/loadtest.py --worker --master-host master
 volumes:
   data:
