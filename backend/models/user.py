@@ -1,9 +1,9 @@
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
 import bcrypt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr, Field, validator
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

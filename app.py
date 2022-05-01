@@ -9,6 +9,7 @@ from backend.routes.user import router as UserRouter
 from backend.routes.admin import router as AdminRouter
 from backend.routes.basket import router as BasketRouter
 from backend.routes.product import router as ProductRouter
+from backend.db.mongodb import connect_db, close_mongo_connection
 
 app = FastAPI()
 LOCAL_REDIS_URL = "redis://127.0.0.1:6379"
@@ -26,6 +27,9 @@ def startup():
 
 
 token_listener = JWTBearer()
+
+app.add_event_handler("startup", connect_db)
+app.add_event_handler("shutdown", close_mongo_connection)
 
 
 @app.get("/", tags=["Root"])

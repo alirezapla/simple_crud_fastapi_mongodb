@@ -4,6 +4,7 @@ motor==2.5.1
 pydantic[email]
 python-decouple==3.6
 uvicorn==0.17.4
+
 PyJWT
 bcrypt
 passlib
@@ -12,3 +13,4 @@ pytest
 httpx
 SQLAlchemy==1.4.26
 sqlalchemy2-stubs
+gunicorn==20.1.0

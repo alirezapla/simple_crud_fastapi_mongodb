@@ -16,4 +16,4 @@ EXPOSE 8080
 
 COPY . /app
 
-ENTRYPOINT ["uvicorn", "app:app","--reload" ,"--host", "0.0.0.0", "--port", "8080"]
+# ENTRYPOINT ["uvicorn", "app:app","--reload" ,"--host", "0.0.0.0","--workers" ,"4" "--port", "8080"]

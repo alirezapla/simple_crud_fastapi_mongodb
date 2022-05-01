@@ -1,11 +1,10 @@
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
 import time
 from typing import Dict
 
 import jwt
 from decouple import config
+from fastapi import HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 
 def token_response(token: str):
